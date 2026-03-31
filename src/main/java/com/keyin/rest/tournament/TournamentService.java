@@ -1,5 +1,6 @@
 package com.keyin.rest.tournament;
 
+import com.keyin.exception.ResourceNotFoundException;
 import com.keyin.rest.member.Member;
 import com.keyin.rest.member.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class TournamentService {
             existing.setEntryFee(updated.getEntryFee());
             existing.setCashPrizeAmount(updated.getCashPrizeAmount());
             return tournamentRepository.save(existing);
-        }).orElseThrow(() -> new RuntimeException("Tournament not found: " + id));
+        }).orElseThrow(() -> new ResourceNotFoundException("Tournament not found: " + id));
     }
 
     public void deleteTournament(Long id) {
@@ -62,9 +63,9 @@ public class TournamentService {
     // Manage participants
     public Tournament addMemberToTournament(Long tournamentId, Long memberId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new RuntimeException("Tournament not found: " + tournamentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Tournament not found: " + tournamentId));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found: " + memberId));
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found: " + memberId));
 
         tournament.addMember(member);
         return tournamentRepository.save(tournament);
@@ -72,9 +73,9 @@ public class TournamentService {
 
     public Tournament removeMemberFromTournament(Long tournamentId, Long memberId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new RuntimeException("Tournament not found: " + tournamentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Tournament not found: " + tournamentId));
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found: " + memberId));
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found: " + memberId));
 
         tournament.removeMember(member);
         return tournamentRepository.save(tournament);

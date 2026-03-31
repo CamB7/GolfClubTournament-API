@@ -1,5 +1,7 @@
 package com.keyin.rest.member;
 
+import com.keyin.rest.tournament.Tournament;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -11,7 +13,7 @@ import java.util.HashSet;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // MySQL-friendly auto increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -30,14 +32,14 @@ public class Member {
 
     private Integer membershipDurationMonths;
 
-    // Bi-directional many-to-many with Tournament
     @ManyToMany
     @JoinTable(
             name = "tournament_participants",
             joinColumns = @JoinColumn(name = "member_id"),
             inverseJoinColumns = @JoinColumn(name = "tournament_id")
     )
-    private Set<com.keyin.rest.tournament.Tournament> tournaments = new HashSet<>();
+    @JsonManagedReference
+    private Set<Tournament> tournaments = new HashSet<>();
 
     public Member() {
     }
@@ -117,22 +119,22 @@ public class Member {
         this.membershipDurationMonths = membershipDurationMonths;
     }
 
-    public Set<com.keyin.rest.tournament.Tournament> getTournaments() {
+    public Set<Tournament> getTournaments() {
         return tournaments;
     }
 
-    public void setTournaments(Set<com.keyin.rest.tournament.Tournament> tournaments) {
+    public void setTournaments(Set<Tournament> tournaments) {
         this.tournaments = tournaments;
     }
 
-    public void addTournament(com.keyin.rest.tournament.Tournament tournament) {
+    public void addTournament(Tournament tournament) {
         this.tournaments.add(tournament);
-        // inverse side is updated by service layer to avoid circular diagnostic issues in the IDE
+        tournament.getMembers().add(this);
     }
 
-    public void removeTournament(com.keyin.rest.tournament.Tournament tournament) {
+    public void removeTournament(Tournament tournament) {
         this.tournaments.remove(tournament);
-        // inverse side is updated by service layer
+        tournament.getMembers().remove(this);
     }
 
     @Override
