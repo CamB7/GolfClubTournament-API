@@ -4,6 +4,7 @@ import com.keyin.exception.ResourceNotFoundException;
 import com.keyin.rest.member.Member;
 import com.keyin.rest.member.MemberRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -61,6 +62,7 @@ public class TournamentService {
     }
 
     // Manage participants
+    @Transactional
     public Tournament addMemberToTournament(Long tournamentId, Long memberId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tournament not found: " + tournamentId));
@@ -68,9 +70,12 @@ public class TournamentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Member not found: " + memberId));
 
         tournament.addMember(member);
-        return tournamentRepository.save(tournament);
+        // Member is the owning side (defines the join table). Save it to persist the relationship.
+        memberRepository.save(member);
+        return tournamentRepository.findById(tournamentId).orElse(tournament);
     }
 
+    @Transactional
     public Tournament removeMemberFromTournament(Long tournamentId, Long memberId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tournament not found: " + tournamentId));
@@ -78,6 +83,8 @@ public class TournamentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Member not found: " + memberId));
 
         tournament.removeMember(member);
-        return tournamentRepository.save(tournament);
+        // Save the owning side to remove the join table entry.
+        memberRepository.save(member);
+        return tournamentRepository.findById(tournamentId).orElse(tournament);
     }
 }

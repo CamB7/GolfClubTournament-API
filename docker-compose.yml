@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    image: golfclubtournament-api:latest
+    ports:
+      - 8081:8080
+    environment:
+      - spring.datasource.url=jdbc:mysql://golf-tournament-db.c11rtafvrn2t.us-east-1.rds.amazonaws.com/golf_qap
+      - spring.datasource.password=Keyin123
+      - spring.datasource.username=admin
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: golf_qap
+      MYSQL_ROOT_PASSWORD: Keyin123
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data: {}

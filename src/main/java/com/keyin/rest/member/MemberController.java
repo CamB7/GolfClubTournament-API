@@ -36,7 +36,8 @@ public class MemberController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) String membershipType,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate tournamentStartDate
     ) {
         if (name != null) {
             return ResponseEntity.ok(memberService.findByName(name));
@@ -49,6 +50,9 @@ public class MemberController {
         }
         if (startDate != null) {
             return ResponseEntity.ok(memberService.findByMembershipStartDate(startDate));
+        }
+        if (tournamentStartDate != null) {
+            return ResponseEntity.ok(memberService.findByTournamentStartDate(tournamentStartDate));
         }
         return ResponseEntity.ok(memberService.getAllMembers());
     }

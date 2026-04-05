@@ -62,15 +62,20 @@ class TournamentServiceTest {
     void addMemberToTournamentSuccess() {
         when(tournamentRepository.findById(1L)).thenReturn(Optional.of(sampleTournament));
         when(memberRepository.findById(1L)).thenReturn(Optional.of(sampleMember));
-        when(tournamentRepository.save(any(Tournament.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Tournament updated = tournamentService.addMemberToTournament(1L, 1L);
-        assertThat(updated.getMembers()).hasSize(1);
-        assertThat(updated.getMembers().iterator().next().getId()).isEqualTo(1L);
 
-        verify(tournamentRepository).findById(1L);
+        assertThat(sampleTournament.getMembers()).hasSize(1);
+        assertThat(sampleTournament.getMembers().iterator().next().getId()).isEqualTo(1L);
+
+        assertThat(updated.getMembers()).hasSize(1);
+
+        verify(tournamentRepository, times(2)).findById(1L);
         verify(memberRepository).findById(1L);
-        verify(tournamentRepository).save(sampleTournament);
+        // service saves the owning side (Member); accept any Member instance
+        verify(memberRepository).save(any(Member.class));
+        verify(tournamentRepository, never()).save(any());
     }
 
     @Test

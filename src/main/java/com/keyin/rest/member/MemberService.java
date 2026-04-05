@@ -60,4 +60,8 @@ public class MemberService {
     public List<Member> findByMembershipStartDate(LocalDate date) {
         return memberRepository.findByMembershipStartDate(date);
     }
+
+    public List<Member> findByTournamentStartDate(LocalDate date) {
+        return memberRepository.findByTournamentStartDate(date);
+    }
 }
