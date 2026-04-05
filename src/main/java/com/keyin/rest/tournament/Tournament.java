@@ -1,7 +1,7 @@
 package com.keyin.rest.tournament;
 
 import com.keyin.rest.member.Member;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -29,7 +29,7 @@ public class Tournament {
     private BigDecimal cashPrizeAmount;
 
     @ManyToMany(mappedBy = "tournaments")
-    @JsonBackReference
+    @JsonIgnore
     private Set<Member> members = new HashSet<>();
 
     public Tournament() {

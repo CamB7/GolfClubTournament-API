@@ -1,8 +1,8 @@
 package com.keyin.rest.member;
 
 import com.keyin.rest.tournament.Tournament;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
@@ -38,7 +38,6 @@ public class Member {
             joinColumns = @JoinColumn(name = "member_id"),
             inverseJoinColumns = @JoinColumn(name = "tournament_id")
     )
-    @JsonManagedReference
     private Set<Tournament> tournaments = new HashSet<>();
 
     public Member() {

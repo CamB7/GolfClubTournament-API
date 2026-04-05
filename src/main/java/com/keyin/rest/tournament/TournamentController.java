@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+
+import com.keyin.rest.member.Member;
 
 @RestController
 @RequestMapping("/api/tournaments")
@@ -28,6 +31,14 @@ public class TournamentController {
     public ResponseEntity<Tournament> getTournament(@PathVariable Long id) {
         return tournamentService.getTournamentById(id)
                 .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Return participants (members) for a specific tournament
+    @GetMapping("/{id}/members")
+    public ResponseEntity<Set<Member>> getTournamentMembers(@PathVariable Long id) {
+        return tournamentService.getTournamentById(id)
+                .map(t -> ResponseEntity.ok(t.getMembers()))
                 .orElse(ResponseEntity.notFound().build());
     }
 
